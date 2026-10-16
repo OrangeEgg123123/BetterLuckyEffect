@@ -1,6 +1,6 @@
 # 更好的幸运效果 — 整合包作者指南
 
-> 面向整合包作者的文档。开发 / 构建 / 实现细节见 [DEVELOPMENT.md](DEVELOPMENT.md)。
+> 面向整合包作者的文档。开发 / 构建 / 实现细节见 [DEVELOPMENT.md](DEVELOPMENT.md)，各版本变更见 [CHANGELOG.md](CHANGELOG.md)。
 
 | 项 | 值 |
 | --- | --- |

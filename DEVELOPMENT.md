@@ -17,6 +17,8 @@
 | 包名 | `io.github.orangeegg123123.betterluck`（1.07 起，原来是 `com.example.betterluck`） |
 | 产物 | `build/libs/betterluck-<版本>.jar`（版本见 `gradle.properties` 的 `mod_version`） |
 | 已归档版本 | `releases/` 下按版本存放 jar 与源码包 |
+| 更新日志 | [CHANGELOG.md](CHANGELOG.md)（1.0.7 起逐条记录）|
+| Git 历史 / Tag | 历史只覆盖 1.0.6 → 1.0.7，所以 Tag 全部对应 `v1.0.7`；旧版本请取对应的 `sources.zip` 编译 |
 | 版本库 | 本目录是一个本地 git 仓库，重构前的原始状态是第一个提交（`git log` 看得到） |
 
 ---
