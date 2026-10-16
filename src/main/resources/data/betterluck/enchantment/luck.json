@@ -1,0 +1,36 @@
+{
+  "anvil_cost": 4,
+  "description": {
+    "translate": "enchantment.betterluck.luck"
+  },
+  "effects": {
+    "minecraft:attributes": [
+      {
+        "id": "betterluck:enchantment_luck",
+        "attribute": "minecraft:generic.luck",
+        "amount": {
+          "type": "minecraft:linear",
+          "base": 1.0,
+          "per_level_above_first": 1.0
+        },
+        "operation": "add_value"
+      }
+    ]
+  },
+  "exclusive_set": "#betterluck:exclusive_set/luck",
+  "max_cost": {
+    "base": 65,
+    "per_level_above_first": 9
+  },
+  "max_level": 5,
+  "min_cost": {
+    "base": 15,
+    "per_level_above_first": 9
+  },
+  "slots": [
+    "chest",
+    "hand"
+  ],
+  "supported_items": "#betterluck:luck_enchantable",
+  "weight": 2
+}

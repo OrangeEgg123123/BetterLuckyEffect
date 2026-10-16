@@ -1,0 +1,28 @@
+{
+  "values": [
+    "minecraft:diamond",
+    "minecraft:emerald",
+    "minecraft:iron_ingot",
+    "minecraft:gold_ingot",
+    "minecraft:iron_nugget",
+    "minecraft:gold_nugget",
+    "minecraft:lapis_lazuli",
+    "minecraft:amethyst_shard",
+    "minecraft:quartz",
+    "minecraft:echo_shard",
+    "minecraft:netherite_scrap",
+    "minecraft:ancient_debris",
+    "minecraft:netherite_ingot",
+    "minecraft:redstone",
+    "minecraft:gunpowder",
+    "minecraft:glowstone",
+    "minecraft:magma_cream",
+    "minecraft:obsidian",
+    "minecraft:crying_obsidian",
+    "minecraft:ender_pearl",
+    "minecraft:experience_bottle",
+    "minecraft:book",
+    "#minecraft:trim_templates",
+    "minecraft:netherite_upgrade_smithing_template"
+  ]
+}

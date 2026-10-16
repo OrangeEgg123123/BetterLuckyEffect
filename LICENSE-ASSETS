@@ -1,0 +1,56 @@
+更好的幸运效果 —— 素材许可
+Better Luck Effect — Asset License
+Copyright (c) 2026 OrangeEgg123123
+
+本模组的【素材部分】以 Creative Commons 署名 4.0 国际许可协议（CC BY 4.0）授权。
+代码部分不在本文件范围内，见同目录的 LICENSE（LGPL-3.0）。
+
+The ASSETS of this mod are licensed under the Creative Commons Attribution 4.0
+International License (CC BY 4.0). Code is covered separately by LICENSE
+(LGPL-3.0), not by this file.
+
+适用范围 / Scope
+--------------------------------------------------------------------------------
+    src/main/resources/assets/   下的全部内容，包括：
+       - textures/   贴图
+       - models/     模型
+       - lang/       语言文件
+
+你可以自由地 / You are free to
+--------------------------------------------------------------------------------
+  * 共享 — 以任何媒介或格式复制、发行本素材
+    Share — copy and redistribute the material in any medium or format
+  * 改编 — 重混、转换本素材，或基于本素材进行创作
+    Adapt — remix, transform, and build upon the material
+
+  许可人不能撤回这些权利。上述权利包括商业用途。
+  The licensor cannot revoke these freedoms as long as you follow the license
+  terms. Commercial use is allowed.
+
+但必须遵守 / Under the following terms
+--------------------------------------------------------------------------------
+  * 署名 — 必须给出适当的署名，提供指向本许可协议的链接，并标明是否作出了修改。
+    你可以用任何合理的方式署名，但不得以任何方式暗示许可人认可你或你的使用。
+    Attribution — You must give appropriate credit, provide a link to the license,
+    and indicate if changes were made. You may do so in any reasonable manner,
+    but not in any way that suggests the licensor endorses you or your use.
+
+  * 不得增加限制 — 你不得适用法律条款或技术措施，在法律上限制他人做本许可
+    允许的事情。
+    No additional restrictions — You may not apply legal terms or technological
+    measures that legally restrict others from doing anything the license permits.
+
+许可协议全文 / Full legal code
+--------------------------------------------------------------------------------
+  英文（权威版本）: https://creativecommons.org/licenses/by/4.0/legalcode
+  中文摘要:         https://creativecommons.org/licenses/by/4.0/deed.zh
+
+署名格式建议 / Suggested attribution
+--------------------------------------------------------------------------------
+  更好的幸运效果 (Better Luck Effect) by OrangeEgg123123,
+  licensed under CC BY 4.0.
+
+无担保 / No warranty
+--------------------------------------------------------------------------------
+  本素材按「原样」提供，不附带任何明示或默示的担保。
+  The material is provided "as is", without warranties of any kind.

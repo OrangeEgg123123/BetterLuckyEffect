@@ -1,0 +1,48 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = 'NeoForged'
+            url = 'https://neoforged.forgecdn.net/releases'
+        }
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'betterluck'
+
+// ---------------------------------------------------------------------------
+//  中国大陆网络适配
+//
+//  官方仓库 maven.neoforged.net 在国内被 DNS 污染 + TLS SNI 阻断，无法直连。
+//  CurseForge 的 https://neoforged.forgecdn.net 是它的完整镜像（含 /releases
+//  与 /mojang-meta 两个仓库），这里把所有指向官方仓库的地址按原路径改写过去。
+//
+//  注意：不能简单地把整个 URL 换成 /releases，因为 minecraft-dependencies 这个
+//  构件只存在于 /mojang-meta 下（NeoForm 生成的 Minecraft 依赖清单）。
+//
+//  同时必须拦截两处仓库注册点：
+//    1. settings.dependencyResolutionManagement —— 插件（ModDevGradle）会往这里注入
+//    2. project.repositories                     —— 构建脚本自己声明的
+//  插件是动态注册仓库的，所以要用 configureEach 做延迟拦截。
+// ---------------------------------------------------------------------------
+def ORIGIN = 'maven.neoforged.net'
+def MIRROR = 'https://neoforged.forgecdn.net'
+
+def rewriteNeoForged = { repo ->
+    if (repo instanceof MavenArtifactRepository) {
+        def url = repo.url.toString()
+        if (url.contains(ORIGIN)) {
+            def fixed = url.replace("https://${ORIGIN}", MIRROR).replace("http://${ORIGIN}", MIRROR)
+            if (fixed != url) {
+                repo.setUrl(fixed)
+            }
+        }
+    }
+}
+
+dependencyResolutionManagement.repositories.configureEach(rewriteNeoForged)
+pluginManagement.repositories.configureEach(rewriteNeoForged)
+gradle.beforeProject { proj ->
+    proj.repositories.configureEach(rewriteNeoForged)
+}

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "betterluck:block/example_block"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+# Gradle / 构建产物
+.gradle/
+.gradle-home/
+build/
+out/
+run/
+logs/
+
+# 本地工具链（JDK 与 Gradle，体积很大，不要提交）
+.tools/
+.setup/
+
+# 数据生成器的缓存
+src/generated/resources/.cache
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+
+# 系统
+Thumbs.db
+Desktop.ini
+.DS_Store

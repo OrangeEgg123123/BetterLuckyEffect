@@ -1,0 +1,31 @@
+modLoader = "javafml"
+loaderVersion = "${loader_version_range}"
+license = "${mod_license}"
+
+[[mods]]
+modId = "${mod_id}"
+version = "${mod_version}"
+
+# 注意：displayName / description 是直接写在这里的字面量。
+# 原因一：Gradle 以 ISO-8859-1 读取 gradle.properties，中文经它注入会变成乱码。
+# 原因二：NeoForge 21.1.209 不支持本地化模组名/简介——ModListWidget 用的是
+#         Component.literal(getDisplayName())，不解翻译键；FML 的 ModInfo 里
+#         displayName 也只是普通 String，在语言文件加载之前就定下来了。
+#         所以这里只能写成中英双语，让任何语言环境下都能看懂。
+displayName = "更好的幸运效果 (Better Luck Effect)"
+authors = "${mod_authors}"
+description = '''扩展幸运的来源，并让幸运真正影响掉落。 / Extends where Luck comes from and makes it actually affect drops.'''
+
+[[dependencies.${mod_id}]]
+modId = "neoforge"
+type = "required"
+versionRange = "${neo_version_range}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "minecraft"
+type = "required"
+versionRange = "${minecraft_version_range}"
+ordering = "NONE"
+side = "BOTH"

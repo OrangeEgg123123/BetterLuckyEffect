@@ -1,0 +1,124 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.107'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+// Minecraft 1.21.1 需要 Java 21。
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'NeoForged'
+        url = 'https://neoforged.forgecdn.net/releases'
+    }
+    // KubeJS 的官方仓库（国内可直连，无需镜像）
+    maven {
+        name = 'KubeJS (Latvian)'
+        url = 'https://maven.latvian.dev/releases'
+    }
+}
+
+neoForge {
+    version = project.neo_version
+
+    runs {
+        client {
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        // 数据生成：产物输出到 src/generated/resources
+        // 注意：ModDevGradle 里这个 run 类型叫 data（不是 NeoGradle 的 clientData）。
+        data {
+            data()
+            programArguments.addAll '--mod', project.mod_id, '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+dependencies {
+    // KubeJS 集成：用 compileOnly，玩家不装 KubeJS 时模组照样能跑，只是脚本绑定不生效。
+    //
+    // transitive = false 是必须的：KubeJS 的 POM 依赖 architectury 等仓库，
+    // 而这个网络下 maven.architectury.dev 连不上（ECONNRESET）。
+    // 我们只用到 kubejs jar 里的 3 个类型（KubeJSPlugin / BindingRegistry / ClassFilter），
+    // 关掉传递依赖既够用又避开了那些仓库。
+    compileOnly("dev.latvian.mods:kubejs-neoforge:2101.7.2-build.379") {
+        transitive = false
+    }
+}
+
+// 把 gradle.properties 里的元数据注入 neoforge.mods.toml 与 pack.mcmeta。
+//
+// 注意 filteringCharset 必须显式设为 UTF-8：Gradle 的 filter/expand 默认使用
+// 平台编码（中文 Windows 上是 GBK），而源文件是 UTF-8。不设置的话，**文件里
+// 字面写的中文**也会变成乱码。
+//
+// 另外 gradle.properties 只能放 ASCII：Gradle 以 ISO-8859-1 读它，
+// 中文经 ${...} 注入同样会乱码。所以 displayName / description 直接字面
+// 写在 neoforge.mods.toml 里，不放进这个 map。
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+    ]
+    inputs.properties replaceProperties
+    filteringCharset = 'UTF-8'
+    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Specification-Title'   : mod_id,
+                'Specification-Vendor'  : mod_authors,
+                'Specification-Version' : '1',
+                'Implementation-Title'  : project.name,
+                'Implementation-Version': project.jar.archiveVersion,
+                'Implementation-Vendor' : mod_authors,
+        ])
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
