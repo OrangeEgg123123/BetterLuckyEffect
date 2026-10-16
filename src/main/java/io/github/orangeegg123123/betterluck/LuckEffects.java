@@ -1,4 +1,4 @@
-package com.example.betterluck;
+package io.github.orangeegg123123.betterluck;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -58,9 +58,12 @@ public final class LuckEffects {
             ResourceLocation.fromNamespaceAndPath(BetterLuckEffect.MODID, "rare_drops"));
 
     /**
-     * 「宝箱里数量会随幸运增加」的物品清单，定义在
+     * 「宝箱里会因幸运更容易出现」的物品清单，定义在
      * {@code data/betterluck/tags/item/chest_bonus_items.json}
-     * （钻石、附魔书、各种锻造模板）。
+     * （钻石、各种金属、锻造模板等）。
+     *
+     * <p>名字里的 bonus 指「幸运加成」：幸运会额外重掷宝箱表，
+     * <b>只有</b>这些物品会被留下并入箱，所以这个标签决定了宝箱收益的范围。
      */
     public static final TagKey<Item> CHEST_BONUS_ITEMS = TagKey.create(
             Registries.ITEM,

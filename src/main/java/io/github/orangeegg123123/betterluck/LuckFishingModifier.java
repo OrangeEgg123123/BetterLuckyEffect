@@ -1,4 +1,4 @@
-package com.example.betterluck;
+package io.github.orangeegg123123.betterluck;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

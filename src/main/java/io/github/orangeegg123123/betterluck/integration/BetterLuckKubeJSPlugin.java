@@ -1,4 +1,4 @@
-package com.example.betterluck.integration;
+package io.github.orangeegg123123.betterluck.integration;
 
 import dev.latvian.mods.kubejs.plugin.ClassFilter;
 import dev.latvian.mods.kubejs.plugin.KubeJSPlugin;

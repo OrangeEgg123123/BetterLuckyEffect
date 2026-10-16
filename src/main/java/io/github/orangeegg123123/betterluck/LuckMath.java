@@ -1,4 +1,4 @@
-package com.example.betterluck;
+package io.github.orangeegg123123.betterluck;
 
 import net.minecraft.util.RandomSource;
 
@@ -49,5 +49,33 @@ public final class LuckMath {
             }
         }
         return extra;
+    }
+
+    /**
+     * 把「小数期望」变成整数次数（用于「多掷几次战利品表」这类加成）。
+     *
+     * <p>口径和 {@link #rollExtra} 里的「小数部分按概率补 1」完全一致：
+     * 整数部分固定拿到，小数部分按这个概率再补 1 次，
+     * 所以<b>期望次数就等于 {@code expectation}</b>。
+     *
+     * <p>为什么不直接取整：期望 0.5 次时取整会变成 0 次，整个加成被抹掉。
+     *
+     * @param expectation 期望次数，例如「每级 1 次 × 幸运 0.5」= 0.5
+     * @param random      随机源
+     * @param cap         次数上限；{@code 0} 表示不限制
+     * @return 本次实际次数，可能为 0
+     */
+    public static int rollCount(float expectation, RandomSource random, int cap) {
+        if (expectation <= 0.0F) return 0;
+
+        int whole = (int) expectation;
+        float frac = expectation - whole;
+
+        int count = whole;
+        if (frac > 0.0F && random.nextFloat() < frac) {
+            count++;
+        }
+        // 只有真的超了才封顶，免得白白吃掉一次随机数
+        return cap > 0 && count > cap ? cap : count;
     }
 }

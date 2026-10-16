@@ -1,1 +1,1 @@
-com.example.betterluck.integration.BetterLuckKubeJSPlugin
+io.github.orangeegg123123.betterluck.integration.BetterLuckKubeJSPlugin

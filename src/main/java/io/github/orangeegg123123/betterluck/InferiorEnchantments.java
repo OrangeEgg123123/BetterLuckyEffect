@@ -1,4 +1,4 @@
-package com.example.betterluck;
+package io.github.orangeegg123123.betterluck;
 
 import java.util.HashMap;
 import java.util.Map;

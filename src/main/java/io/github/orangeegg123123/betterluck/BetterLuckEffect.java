@@ -1,4 +1,4 @@
-package com.example.betterluck;
+package io.github.orangeegg123123.betterluck;
 
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
@@ -222,20 +222,20 @@ public class BetterLuckEffect {
                 yesNo(inTag(enchantments, EnchantmentTags.ON_MOB_SPAWN_EQUIPMENT)),
                 yesNo(mendingExclusive));
 
-        LOGGER.info("更好的幸运效果：数值 —— 等级表 {}（胸甲 / 主手工具 / 其余幸运 各自查表后相加）；钓鱼宝藏 {}%/级（上限 {}%），稀有重掷 {} 次/级（上限 {} 次）",
+        LOGGER.info("更好的幸运效果：数值 —— 数量类等级表 {}（挖矿 / 击杀普通掉落；胸甲 / 主手工具 / 其余幸运 各自查表后相加）；钓鱼宝藏 {}%/级（上限 {}%），稀有重掷 {} 次/级（上限 {} 次）",
                 LuckTuning.bonusByLevel(),
                 LuckTuning.treasureChancePerLuck() * 100,
                 LuckTuning.treasureChanceMax() * 100,
                 LuckTuning.rareDropRollsPerLuck(),
                 LuckTuning.rareDropMaxRolls());
 
-        LOGGER.info("更好的幸运效果：宝箱 —— 金苹果转化 {}%/级（上限 {}%），排除 {} 张必出表；其余加成物品（{} 项）走等级表，每堆上限 {}、每箱上限 {}",
+        LOGGER.info("更好的幸运效果：宝箱 —— 金苹果转化 {}%/级（上限 {}%），排除 {} 张必出表；加成物品（{} 项）改为「额外重掷宝箱表、只补箱子里还没有的」，{} 次/级（上限 {} 次，0 = 关闭）",
                 LuckTuning.goldenAppleChancePerLuck() * 100,
                 LuckTuning.goldenAppleChanceMax() * 100,
                 LuckTuning.goldenAppleExcludedTables().size(),
                 chestItemCount,
-                LuckTuning.chestMaxExtraPerStack() == 0 ? "无" : "+" + LuckTuning.chestMaxExtraPerStack(),
-                LuckTuning.chestMaxExtraPerChest() == 0 ? "无" : "+" + LuckTuning.chestMaxExtraPerChest());
+                LuckTuning.chestExtraRollsPerLuck(),
+                LuckTuning.chestMaxExtraRolls());
 
         // 把解析后的劣质附魔打出来：配置格式写错时不会报错、只会静默失效，这里能直接看出来。
         var inferior = LuckTuning.inferiorEnchantments();

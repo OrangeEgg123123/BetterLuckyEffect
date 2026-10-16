@@ -14,9 +14,10 @@
 | 显示名 | 更好的幸运效果 |
 | 英文名 | Better Luck Effect |
 | mod id | `betterluck` |
-| 包名 | `com.example.betterluck` |
+| 包名 | `io.github.orangeegg123123.betterluck`（1.07 起，原来是 `com.example.betterluck`） |
 | 产物 | `build/libs/betterluck-<版本>.jar`（版本见 `gradle.properties` 的 `mod_version`） |
 | 已归档版本 | `releases/` 下按版本存放 jar 与源码包 |
+| 版本库 | 本目录是一个本地 git 仓库，重构前的原始状态是第一个提交（`git log` 看得到） |
 
 ---
 
@@ -46,11 +47,14 @@
 服务端启动日志：
 
 ```
-[00:22:40] [Server thread/INFO] [com.example.betterluck.BetterLuckEffect]: 更好的幸运效果：自检 —— 稀有掉落 16 项；宝箱加成 20 项；幸运附魔 已载入（最高 5 级；槽位 [CHEST, HAND]；宝箱 是 / 附魔台 是 / 村民交易 是 / 怪物装备 是 / 与经验修补互斥 是）；自定义药水 2 档
-[00:22:40] [Server thread/INFO] [com.example.betterluck.BetterLuckEffect]: 更好的幸运效果：数值 —— 等级表 [0.2, 0.4, 0.8, 1.2, 1.6]（胸甲 / 主手工具 / 其余幸运 各自查表后相加）；钓鱼宝藏 10.0%/级（上限 40.0%），稀有重掷 1 次/级（上限 2 次）
-[00:22:40] [Server thread/INFO] [com.example.betterluck.BetterLuckEffect]: 更好的幸运效果：宝箱 —— 金苹果转化 10.0%/级（上限 40.0%）；钻石 / 锻造模板走等级表
-[00:22:40] [Server thread/INFO] [com.example.betterluck.BetterLuckEffect]: 更好的幸运效果：劣质附魔 —— 已生效 3 项 {minecraft:vanishing_curse=0.25, minecraft:binding_curse=0.25, minecraft:bane_of_arthropods=0.5}（与幸运无关；格式错的条目会被忽略）
+[00:22:40] [Server thread/INFO] [io.github.orangeegg123123.betterluck.BetterLuckEffect]: 更好的幸运效果：自检 —— 稀有掉落 16 项；宝箱加成 41 项；幸运附魔 已载入（最高 5 级；槽位 [CHEST, HAND]；宝箱 是 / 附魔台 是 / 村民交易 是 / 怪物装备 是 / 与经验修补互斥 是）；自定义药水 2 档
+[00:22:40] [Server thread/INFO] [io.github.orangeegg123123.betterluck.BetterLuckEffect]: 更好的幸运效果：数值 —— 数量类等级表 [0.2, 0.4, 0.8, 1.2, 1.6]（挖矿 / 击杀普通掉落；胸甲 / 主手工具 / 其余幸运 各自查表后相加）；钓鱼宝藏 10.0%/级（上限 40.0%），稀有重掷 1 次/级（上限 2 次）
+[00:22:40] [Server thread/INFO] [io.github.orangeegg123123.betterluck.BetterLuckEffect]: 更好的幸运效果：宝箱 —— 金苹果转化 10.0%/级（上限 40.0%），排除 1 张必出表；加成物品（41 项）改为「额外重掷宝箱表、只补箱子里还没有的」，1 次/级（上限 3 次，0 = 关闭）
+[00:22:40] [Server thread/INFO] [io.github.orangeegg123123.betterluck.BetterLuckEffect]: 更好的幸运效果：劣质附魔 —— 已生效 3 项 {minecraft:vanishing_curse=0.25, minecraft:binding_curse=0.25, minecraft:bane_of_arthropods=0.5}（与幸运无关；格式错的条目会被忽略）
 ```
+
+> ⚠️ **上面这段是 1.0.0 的原始日志**（包名与「宝箱」那一行已按 1.07 的新写法改过，
+> 方便对照格式）。1.07 这次重构**没有重新跑过服务端**，原因见 2.3 宝箱一节的说明。
 
 这几行自检是刻意加的：数据包文件路径写错时 Minecraft **不会报错**，只会静默失效。
 附魔 JSON 解析失败会显示「缺失」，四个获取途径标签、互斥标签、宝箱加成标签
@@ -60,6 +64,10 @@
 > ⚠️ **改配置默认值后必须删掉旧的 `config/betterluck-common.toml`。**
 > NeoForge 会沿用文件里已有的值，新默认值只在文件不存在时才写入。
 > 本次调平衡时就踩到了：代码改成 0.25，日志里却仍然打印 +50%。
+>
+> **1.07 升级到旧版本存档时更要删**：`maxExtraPerStack` / `maxExtraPerChest`
+> 两个键已经不存在了，新键（`extraRollsPerLuck` / `maxExtraRolls`）会以默认值补进去，
+> 旧键留在文件里只会让人以为它还在生效。
 
 ---
 
@@ -208,7 +216,7 @@ public void onRegisterBrewingRecipes(RegisterBrewingRecipesEvent event) {
 问题在于原版的怪物战利品表几乎不用 `quality`，方块掉落更是**完全不看幸运**
 （`Block.getDrops` 压根没把 luck 放进 LootContext），所以喝下去基本没感觉。
 
-于是补上四块：
+于是补上五块：
 
 | 场景 | 触发条件 | 效果 | 默认值 |
 | --- | --- | --- | --- |
@@ -216,6 +224,7 @@ public void onRegisterBrewingRecipes(RegisterBrewingRecipesEvent event) {
 | 击杀 · 稀有掉落**概率** | 玩家有幸运 | 额外重掷实体战利品表，只保留稀有掉落 | 1 次 / 级，上限 2 次 |
 | 挖矿 · 矿物**数量** | 幸运 + **时运**镐 + `c:ores` 方块 | 每个掉落堆叠额外增加数量 | 走等级表 |
 | 击杀 · 掉落**数量** | 幸运 + **抢夺**武器 | **只加普通掉落** | 走等级表 |
+| 宝箱 · 宝物**出现率** | 玩家有幸运 | 额外重掷宝箱战利品表，只补箱子里还没有的宝物 | 1 次 / 级，上限 3 次 |
 
 数值全部可以在 `config/betterluck-common.toml` 里改。
 
@@ -266,8 +275,14 @@ public void onRegisterBrewingRecipes(RegisterBrewingRecipesEvent event) {
 
 - **稀有掉落**（`betterluck:rare_drops` 标签）→ 只走**概率**线，数量不再加成
 - **普通掉落** → 只走**数量**线
+- **宝箱宝物**（`betterluck:chest_bonus_items` 标签）→ 只走**概率**线（重掷），
+  不再给已有的堆加数量
 
 各自只吃一条，不再叠加。
+
+> 顺带一提，挖矿和击杀仍然走等级表，是因为那两处的收益天生就是「数量」：
+> 矿石掉落 1~2 个一堆，掉落物也一样，提高「出现几率」既没有对象也没有观感。
+> 宝箱不一样——表里本来就是按概率抽条的，重掷才有意义。
 
 **实现要点**
 
@@ -278,29 +293,56 @@ public void onRegisterBrewingRecipes(RegisterBrewingRecipesEvent event) {
   再配一条「已经掉过的不再重复」的规则，就避免把必掉物翻倍——比如凋灵的下界之星
   是必掉的，重掷一次就会变 2 个，这条规则正好挡住。
 - 小数加成按「整数部分必得、小数部分按概率补 1」结算。否则 count=1、系数 0.5 时
-  取整会把加成整个抹掉。
+  取整会把加成整个抹掉。宝箱的重掷次数用的是同一套口径（`LuckMath#rollCount`）。
 - 钓鱼**必须**用全局战利品修饰符（Global Loot Modifier）：`ItemFishedEvent` 构造时
   把掉落列表 `addAll` 复制了一份，改 `getDrops()` 根本不影响真正掉落的东西。
 
 #### 宝箱
 
 只对 `data/minecraft/loot_table/chests/` 下的 **56 张**宝箱表生效（`LuckChestModifier`）。
-只改动箱子里**本来就有**的东西，不会凭空添加物品。
+
+**1.07 起：幸运提高的是「物品出现的几率」，不是单次出现的数量。**
+旧做法是「箱子里已有多少，就按幸运成比例再多出几成」（数量线，走等级表）。
+现在改成**额外重掷宝箱战利品表**，只把 `chest_bonus_items` 里的物品并入箱中，
+而且箱子里**已经有的种类一律不再补**。
 
 | 效果 | 默认值 |
 | --- | --- |
+| 额外重掷宝箱表，只补箱子里**还没有的**宝物 | 1 次 / 级，上限 3 次 |
 | 金苹果**整堆**变成附魔金苹果 | 10% / 级，上限 40% |
-| 钻石 / 锻造模板 数量增加 | 走等级表 |
 | 「劣质附魔」出现概率降低 | 按配置，**与幸运无关** |
 
-物品清单在 `data/betterluck/tags/item/chest_bonus_items.json`，当前 **20 项**：
-钻石、`#minecraft:trim_templates`（18 个盔甲纹饰模板）、下界合金升级模板。可直接增删。
+实现要点（`LuckChestModifier#addExtraAppearances`）：
+
+- 次数 = `min(extraRollsPerLuck × 总幸运, maxExtraRolls)`，走的是「概率类」那套公式
+  （不再走 `bonusByLevel` 等级表）。小数部分按概率补 1 次，见 `LuckMath#rollCount`。
+- 重掷调用的是 `LootTable#getRandomItems(LootContext, Consumer)`，**复用同一个 LootContext**：
+  参数、幸运、随机源全都一致，所以抽出来的概率分布和自然开箱完全相同。
+  不要自己重建 `LootParams`——宝箱表的 `paramSet` 必须完全匹配，缺参数会直接抛异常。
+- **必须防重入**：`LootTable#getRandomItems` 内部会调 `CommonHooks.modifyLoot`，
+  也就是会再触发一遍全局修饰符；不拦就会无限递归把服务端爆栈。
+  用的是 `ThreadLocal<Boolean> REROLLING`（重掷那一发进来直接返回）。
+  NeoForge 的 `LootContext` 也自带 visited 守卫，但那是在 `getRandomItemsRaw` 内部
+  push/pop 的，`modifyLoot` 在 pop **之后**才调用，所以拦不住这一层。
+- 「已经有的不再补」是替代旧版「每堆上限 / 每箱上限」的关键规则：必出物品不会被翻倍，
+  富箱子能补的种类反而少，所以不再需要那两个硬顶。
+
+物品清单在 `data/betterluck/tags/item/chest_bonus_items.json`，当前 **41 项**：
+23 个显式物品（钻石、各种金属、红石、火药、末影珍珠、经验瓶……）
++ `#minecraft:trim_templates`（18 个盔甲纹饰模板）+ 下界合金升级模板。可直接增删。
 
 > **为什么下界合金升级模板要单独写一条**：`#minecraft:trim_templates` 只含 18 个
 > **盔甲纹饰**模板，**不含**下界合金升级模板，所以必须单独补上。
 >
-> **附魔书目前不受幸运影响**：原先它吃的是数量加成（+5%/级），已按要求移除。
+> **附魔书不受幸运影响**：它不在 `chest_bonus_items` 里，重掷补不进来；
+> 早年吃过一次数量加成（+5%/级），已按要求移除。
 > 关于「优质附魔」的替代方案**暂时搁置**，改做下面的「劣质附魔」。
+
+> ⚠️ **这次重构没有经过构建 / 实机验证**。动手的环境里没有 JDK，也没有 Minecraft /
+> NeoForge 的依赖（只有 ~1GB 可用内存，跑不动 NeoForm 反编译），所以只做到：
+> **用 javac 的解析器逐文件过了语法** + 逐个 API 对着官方 mappings / NeoForge patch 核对。
+> 改动落地后请务必跑一遍 `.\build.bat` 与 `.\run-server.bat`，
+> 再开几个箱子确认重掷与「已有的不再补」符合预期。
 
 #### 劣质附魔
 
@@ -345,7 +387,7 @@ list = ["minecraft:binding_curse=0.25", "minecraft:vanishing_curse=0.25", "minec
 服务端启动时会打印它的条数——路径写错就会显示 `-1`：
 
 ```
-更好的幸运效果：自检 —— 稀有掉落 16 项；宝箱加成 20 项；幸运附魔 已载入（最高 5 级；宝箱 是 / 附魔台 是 / 村民交易 是 / 怪物装备 是 / 与经验修补互斥 是）；自定义药水 2 档
+更好的幸运效果：自检 —— 稀有掉落 16 项；宝箱加成 41 项；幸运附魔 已载入（最高 5 级；宝箱 是 / 附魔台 是 / 村民交易 是 / 怪物装备 是 / 与经验修补互斥 是）；自定义药水 2 档
 ```
 
 ### 2.5 全局战利品修饰符的文件位置
@@ -373,6 +415,8 @@ BetterLuck.luckLevel(player)                  // 幸运等级
 BetterLuck.bonus(player)                      // 当前总加成，1.25 = +125%
 BetterLuck.bonusByLevel()                     // 当前等级表
 BetterLuck.treasureChancePerLuck()            // 钓鱼宝藏概率 / 级
+BetterLuck.chestExtraRollsPerLuck()           // 宝箱重掷次数 / 级
+BetterLuck.chestMaxExtraRolls()               // 每箱重掷次数上限
 BetterLuck.inferiorEnchantments()             // 劣质附魔清单
 
 // 改概率（覆盖配置文件）
@@ -380,6 +424,8 @@ BetterLuck.setTreasureChancePerLuck(0.2)
 BetterLuck.setTreasureChanceMax(0.5)
 BetterLuck.setGoldenAppleChancePerLuck(0.15)
 BetterLuck.setGoldenAppleChanceMax(0.6)
+BetterLuck.setChestExtraRollsPerLuck(2)
+BetterLuck.setChestMaxExtraRolls(6)
 BetterLuck.setRareDropRollsPerLuck(2)
 BetterLuck.setRareDropMaxRolls(4)
 BetterLuck.setBonusLevel(1, 0.2)              // 只改第 1 级
@@ -490,9 +536,10 @@ E:\DFY
 ├── build.gradle                         # 构建脚本（ModDevGradle）
 ├── settings.gradle                      # 插件仓库 + 国内镜像改写
 ├── gradle.properties                    # 构建参数（只能放 ASCII）
-├── src/main/java/com/example/betterluck/
+├── src/main/java/io/github/orangeegg123123/betterluck/
 │   ├── BetterLuckEffect.java            # 模组主类：注册内容、绑定事件、酿造配方
-│   └── Config.java                      # 配置文件定义
+│   ├── Config.java                      # 配置文件定义
+│   └── LuckChestModifier.java           # 宝箱：重掷宝箱表提高宝物出现率
 └── src/main/resources/
     ├── META-INF/neoforge.mods.toml      # 模组描述（中文名写在这里）
     ├── pack.mcmeta
@@ -526,7 +573,7 @@ description = '''让幸运效果真正有用起来。'''
 
 - `gradle.properties` 的 `mod_id`、`mod_group_id`
 - `settings.gradle` 的 `rootProject.name`
-- `src/main/java/com/example/betterluck/` → 你的包路径，以及两个 `.java` 的 `package`
+- `src/main/java/io/github/orangeegg123123/betterluck/` → 你的包路径，以及各 `.java` 的 `package` 与 `import`
 - `BetterLuckEffect.java` 里的 `MODID` 常量与 `@Mod(...)` 注解
 - `src/main/resources/assets/betterluck/` → `assets/<新modid>/`
 - `src/main/resources/data/betterluck/` → `data/<新modid>/`
@@ -642,7 +689,7 @@ Gradle 构建完全正常。
 ### 现状
 
 - `assets/betterluck/lang/` 下有 5 个语言文件：`zh_cn` / `zh_tw` / `zh_hk` / `lzh` / `en_us`，
-  **各 42 个键，五边完全一致**
+  **各 46 个键，五边完全一致**
 - 模组名 / 简介写在 `neoforge.mods.toml` 里，是**中英双语字面量**
 
 ### 各地区用语差异（不是转字形就完事）

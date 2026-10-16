@@ -1,4 +1,4 @@
-package com.example.betterluck;
+package io.github.orangeegg123123.betterluck;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +23,8 @@ public final class LuckTuning {
     private static volatile Double goldenAppleChancePerLuck;
     private static volatile Double goldenAppleChanceMax;
     private static volatile List<String> goldenAppleExcludedTables;
-    private static volatile Integer chestMaxExtraPerChest;
-    private static volatile Integer chestMaxExtraPerStack;
+    private static volatile Integer chestExtraRollsPerLuck;
+    private static volatile Integer chestMaxExtraRolls;
 
     /** 脚本对「劣质附魔」的逐项覆盖，键为附魔 id。 */
     private static final Map<ResourceLocation, Double> inferiorOverrides = new ConcurrentHashMap<>();
@@ -79,16 +79,16 @@ public final class LuckTuning {
         return List.copyOf(Config.CHEST_GOLDEN_APPLE_EXCLUDED.get());
     }
 
-    /** 每个箱子额外增加的数量上限，0 表示不限制。 */
-    public static int chestMaxExtraPerChest() {
-        Integer override = chestMaxExtraPerChest;
-        return override != null ? override : Config.CHEST_MAX_EXTRA_PER_CHEST.get();
+    /** 每级幸运额外重掷几次宝箱战利品表（0 = 关闭这一条）。 */
+    public static int chestExtraRollsPerLuck() {
+        Integer override = chestExtraRollsPerLuck;
+        return override != null ? override : Config.CHEST_EXTRA_ROLLS_PER_LUCK.get();
     }
 
-    /** 每一堆额外增加的数量上限，0 表示不限制。 */
-    public static int chestMaxExtraPerStack() {
-        Integer override = chestMaxExtraPerStack;
-        return override != null ? override : Config.CHEST_MAX_EXTRA_PER_STACK.get();
+    /** 每个箱子额外重掷宝箱表的次数上限（0 = 关闭这一条）。 */
+    public static int chestMaxExtraRolls() {
+        Integer override = chestMaxExtraRolls;
+        return override != null ? override : Config.CHEST_MAX_EXTRA_ROLLS.get();
     }
 
     /**
@@ -175,12 +175,12 @@ public final class LuckTuning {
         goldenAppleExcludedTables = value == null ? null : List.copyOf(value);
     }
 
-    public static void setChestMaxExtraPerChest(Integer value) {
-        chestMaxExtraPerChest = value;
+    public static void setChestExtraRollsPerLuck(Integer value) {
+        chestExtraRollsPerLuck = value;
     }
 
-    public static void setChestMaxExtraPerStack(Integer value) {
-        chestMaxExtraPerStack = value;
+    public static void setChestMaxExtraRolls(Integer value) {
+        chestMaxExtraRolls = value;
     }
 
     public static void setInferiorEnchantment(ResourceLocation id, Double factor) {
@@ -202,8 +202,8 @@ public final class LuckTuning {
         goldenAppleChancePerLuck = null;
         goldenAppleChanceMax = null;
         goldenAppleExcludedTables = null;
-        chestMaxExtraPerChest = null;
-        chestMaxExtraPerStack = null;
+        chestExtraRollsPerLuck = null;
+        chestMaxExtraRolls = null;
         inferiorOverrides.clear();
     }
 }

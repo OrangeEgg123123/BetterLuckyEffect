@@ -1,7 +1,7 @@
-package com.example.betterluck.integration;
+package io.github.orangeegg123123.betterluck.integration;
 
-import com.example.betterluck.LuckScale;
-import com.example.betterluck.LuckTuning;
+import io.github.orangeegg123123.betterluck.LuckScale;
+import io.github.orangeegg123123.betterluck.LuckTuning;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -82,14 +82,14 @@ public class BetterLuckBindings {
         return new ArrayList<>(LuckTuning.goldenAppleExcludedTables());
     }
 
-    /** 每一堆额外增加的数量上限，0 表示不限制。 */
-    public int chestMaxExtraPerStack() {
-        return LuckTuning.chestMaxExtraPerStack();
+    /** 每级幸运额外重掷几次宝箱战利品表，0 表示关闭。 */
+    public int chestExtraRollsPerLuck() {
+        return LuckTuning.chestExtraRollsPerLuck();
     }
 
-    /** 每个箱子额外增加的数量上限，0 表示不限制。 */
-    public int chestMaxExtraPerChest() {
-        return LuckTuning.chestMaxExtraPerChest();
+    /** 每个箱子额外重掷宝箱表的次数上限，0 表示关闭。 */
+    public int chestMaxExtraRolls() {
+        return LuckTuning.chestMaxExtraRolls();
     }
 
     /** 当前的劣质附魔清单，键是附魔 id。 */
@@ -140,14 +140,14 @@ public class BetterLuckBindings {
         LuckTuning.setGoldenAppleExcludedTables(list);
     }
 
-    /** 设置每箱额外上限，0 表示不限制。 */
-    public void setChestMaxExtraPerChest(int value) {
-        LuckTuning.setChestMaxExtraPerChest(value);
+    /** 设置每级幸运的宝箱重掷次数，0 表示关闭。 */
+    public void setChestExtraRollsPerLuck(int value) {
+        LuckTuning.setChestExtraRollsPerLuck(value);
     }
 
-    /** 设置每堆额外上限，0 表示不限制。 */
-    public void setChestMaxExtraPerStack(int value) {
-        LuckTuning.setChestMaxExtraPerStack(value);
+    /** 设置每箱重掷次数上限，0 表示关闭。 */
+    public void setChestMaxExtraRolls(int value) {
+        LuckTuning.setChestMaxExtraRolls(value);
     }
 
     /** 单独改某一级的加成，例如 {@code setBonusLevel(1, 0.2)}。 */
