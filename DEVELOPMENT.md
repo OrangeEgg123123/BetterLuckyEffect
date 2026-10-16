@@ -44,17 +44,18 @@
 | `.\run-data.bat` 数据生成器 | ✅ 启动成功，模组列表含 `更好的幸运效果 1.0.0 (betterluck)` |
 | `.\run-server.bat` 服务端 | ✅ `Done (13.492s)!`，附魔 / 药水 / 酿造 / 收益全部注册成功（见下） |
 
-服务端启动日志：
+服务端启动日志（**1.07 的实测输出**，在 Linux 上用等价的 `./gradlew runServer` 跑的）：
 
 ```
-[00:22:40] [Server thread/INFO] [io.github.orangeegg123123.betterluck.BetterLuckEffect]: 更好的幸运效果：自检 —— 稀有掉落 16 项；宝箱加成 41 项；幸运附魔 已载入（最高 5 级；槽位 [CHEST, HAND]；宝箱 是 / 附魔台 是 / 村民交易 是 / 怪物装备 是 / 与经验修补互斥 是）；自定义药水 2 档
-[00:22:40] [Server thread/INFO] [io.github.orangeegg123123.betterluck.BetterLuckEffect]: 更好的幸运效果：数值 —— 数量类等级表 [0.2, 0.4, 0.8, 1.2, 1.6]（挖矿 / 击杀普通掉落；胸甲 / 主手工具 / 其余幸运 各自查表后相加）；钓鱼宝藏 10.0%/级（上限 40.0%），稀有重掷 1 次/级（上限 2 次）
-[00:22:40] [Server thread/INFO] [io.github.orangeegg123123.betterluck.BetterLuckEffect]: 更好的幸运效果：宝箱 —— 金苹果转化 10.0%/级（上限 40.0%），排除 1 张必出表；加成物品（41 项）改为「额外重掷宝箱表、只补箱子里还没有的」，1 次/级（上限 3 次，0 = 关闭）
-[00:22:40] [Server thread/INFO] [io.github.orangeegg123123.betterluck.BetterLuckEffect]: 更好的幸运效果：劣质附魔 —— 已生效 3 项 {minecraft:vanishing_curse=0.25, minecraft:binding_curse=0.25, minecraft:bane_of_arthropods=0.5}（与幸运无关；格式错的条目会被忽略）
+[01:34:03] [Server thread/INFO] [minecraft/DedicatedServer]: Done (6.473s)! For help, type "help"
+[01:34:03] [Server thread/INFO] [io.gi.or.be.BetterLuckEffect/]: 更好的幸运效果：自检 —— 稀有掉落 16 项；宝箱加成 41 项；幸运附魔 已载入（最高 5 级；槽位 [CHEST, HAND]；宝箱 是 / 附魔台 是 / 村民交易 是 / 怪物装备 是 / 与经验修补互斥 是）；自定义药水 2 档
+[01:34:03] [Server thread/INFO] [io.gi.or.be.BetterLuckEffect/]: 更好的幸运效果：数值 —— 数量类等级表 [0.2, 0.4, 0.8, 1.2, 1.6]（挖矿 / 击杀普通掉落；胸甲 / 主手工具 / 其余幸运 各自查表后相加）；钓鱼宝藏 10.0%/级（上限 40.0%），稀有重掷 1 次/级（上限 2 次）
+[01:34:03] [Server thread/INFO] [io.gi.or.be.BetterLuckEffect/]: 更好的幸运效果：宝箱 —— 金苹果转化 10.0%/级（上限 40.0%），排除 1 张必出表；加成物品（41 项）改为「额外重掷宝箱表、只补箱子里还没有的」，1 次/级（上限 3 次，0 = 关闭）
+[01:34:03] [Server thread/INFO] [io.gi.or.be.BetterLuckEffect/]: 更好的幸运效果：劣质附魔 —— 已生效 3 项 {minecraft:vanishing_curse=0.25, minecraft:binding_curse=0.25}（……）
 ```
 
-> ⚠️ **上面这段是 1.0.0 的原始日志**（包名与「宝箱」那一行已按 1.07 的新写法改过，
-> 方便对照格式）。1.07 这次重构**没有重新跑过服务端**，原因见 2.3 宝箱一节的说明。
+> 模组列表里显示的是 `更好的幸运效果 (Better Luck Effect) 1.07 (betterluck)`。
+> 日志里的类名被日志框架缩写成了 `io.gi.or.be.BetterLuckEffect`，是正常的。
 
 这几行自检是刻意加的：数据包文件路径写错时 Minecraft **不会报错**，只会静默失效。
 附魔 JSON 解析失败会显示「缺失」，四个获取途径标签、互斥标签、宝箱加成标签
@@ -338,11 +339,17 @@ public void onRegisterBrewingRecipes(RegisterBrewingRecipesEvent event) {
 > 早年吃过一次数量加成（+5%/级），已按要求移除。
 > 关于「优质附魔」的替代方案**暂时搁置**，改做下面的「劣质附魔」。
 
-> ⚠️ **这次重构没有经过构建 / 实机验证**。动手的环境里没有 JDK，也没有 Minecraft /
-> NeoForge 的依赖（只有 ~1GB 可用内存，跑不动 NeoForm 反编译），所以只做到：
-> **用 javac 的解析器逐文件过了语法** + 逐个 API 对着官方 mappings / NeoForge patch 核对。
-> 改动落地后请务必跑一遍 `.\build.bat` 与 `.\run-server.bat`，
-> 再开几个箱子确认重掷与「已有的不再补」符合预期。
+> ✅ **验证情况（1.07）**：在 Linux 上跑了等价的完整构建，
+> `BUILD SUCCESSFUL in 5m 32s`（NeoForm 反编译 + 打补丁 + ECJ 重编译），
+> 又用 `./gradlew runServer` 起过一次服务端：`Done (6.473s)!`，自检日志见第 1 节。
+> 所以「新包名能加载、新配置键能读、标签能解析、API 用法能编译」都是验过的。
+>
+> ⚠️ **但重掷这条代码路径本身还没被执行过**：全局战利品修饰符只在真的开箱时才触发，
+> 启动服务端不会走到它 —— 包括 `REROLLING` 那道防重入，也还没在真实开箱里跑过。
+> 发版前建议进游戏开几箱，确认：
+>   1. 箱子里会多出**本来没有的**加成物品，且**已有的那种不会变多**；
+>   2. 开箱不会卡死 / 崩服（递归保护生效）；
+>   3. 顺手统计「一次开箱平均多出几件」，把数据补进 README。
 
 #### 劣质附魔
 
